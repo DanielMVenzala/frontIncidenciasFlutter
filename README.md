@@ -1,7 +1,7 @@
 <h1 align="center">Incidencias Martos</h1>
 
 <p align="center">
-  <strong>App movil para la gestion de incidencias urbanas del municipio de Martos (Jaen)</strong>
+  <strong>App móvil para la gestión de incidencias urbanas del municipio de Martos (Jaén)</strong>
 </p>
 
 <p align="center">
@@ -19,9 +19,11 @@
 
 ---
 
-## Que hace esta app
+<!-- ==================== ESPAÑOL ==================== -->
 
-Los ciudadanos de Martos pueden **reportar problemas** en la via publica (baches, alumbrado, mobiliario, limpieza...) desde su movil. Los administradores del ayuntamiento **gestionan, priorizan y resuelven** esas incidencias en tiempo real.
+## Qué hace esta app
+
+Los ciudadanos de Martos pueden **reportar problemas** en la vía pública (baches, alumbrado, mobiliario, limpieza...) desde su móvil. Los administradores del ayuntamiento **gestionan, priorizan y resuelven** esas incidencias en tiempo real.
 
 ---
 
@@ -29,30 +31,30 @@ Los ciudadanos de Martos pueden **reportar problemas** en la via publica (baches
 
 ### Ciudadano
 
-| Funcion | Descripcion |
+| Función | Descripción |
 |---------|-------------|
-| Crear incidencia | Titulo, descripcion, direccion, prioridad y hasta 5 fotos |
-| Geolocalizacion | La direccion se valida y geocodifica automaticamente con Google Maps |
+| Crear incidencia | Título, descripción, dirección, prioridad y hasta 5 fotos |
+| Geolocalización | La dirección se valida y geocodifica automáticamente con Google Maps |
 | Seguimiento | Ver el estado de tus incidencias y las notas del administrador |
-| Activacion por email | Registro seguro con verificacion por enlace de activacion |
+| Activación por email | Registro seguro con verificación por enlace de activación |
 
 ### Administrador
 
-| Funcion | Descripcion |
+| Función | Descripción |
 |---------|-------------|
-| Gestion completa | Cambiar estado, prioridad, dejar notas visibles para el usuario |
+| Gestión completa | Cambiar estado, prioridad, dejar notas visibles para el usuario |
 | Mapa interactivo | Todas las incidencias geolocalizadas con marcadores por estado |
-| Estadisticas | Graficos por estado, prioridad y evolucion mensual |
-| Gestion de usuarios | Bloquear, desbloquear o eliminar usuarios |
-| Filtros avanzados | Buscar y ordenar por estado, prioridad, fecha, titulo... |
+| Estadísticas | Gráficos por estado, prioridad y evolución mensual |
+| Gestión de usuarios | Bloquear, desbloquear o eliminar usuarios |
+| Filtros avanzados | Buscar y ordenar por estado, prioridad, fecha, título... |
 
 ### UX
 
 - Modo claro / oscuro con persistencia
 - Animaciones Hero entre lista y detalle
-- Visor de imagenes a pantalla completa con zoom
-- Telefonos de interes con apertura directa del marcador
-- Mensajes de error en espanol
+- Visor de imágenes a pantalla completa con zoom
+- Teléfonos de interés con apertura directa del marcador
+- Mensajes de error en español
 
 ---
 
@@ -74,26 +76,26 @@ Flutter (Dart)                    NestJS (TypeScript)
                           +----------------+----------------+
                           |                |                |
                     Cloudinary      Google Maps       Resend
-                    (imagenes)    (geocoding)       (emails)
+                    (imágenes)    (geocoding)       (emails)
 ```
 
 ---
 
-## Stack tecnologico
+## Stack tecnológico
 
-| Capa | Tecnologia |
+| Capa | Tecnología |
 |------|------------|
 | Frontend | Flutter + Provider + Dio + GoRouter |
 | Backend | NestJS + TypeORM + Passport JWT |
 | Base de datos | PostgreSQL (Neon) |
-| Imagenes | Cloudinary |
+| Imágenes | Cloudinary |
 | Emails | Resend |
 | Mapas | Google Maps Platform |
 | Deploy backend | Render |
 
 ---
 
-## Como ejecutar en local
+## Cómo ejecutar en local
 
 ### Backend
 
@@ -125,18 +127,18 @@ flutter build apk --release
 
 ## Variables de entorno (backend)
 
-| Variable | Descripcion |
+| Variable | Descripción |
 |----------|-------------|
 | `DB_NAME` | Nombre de la base de datos |
 | `DB_USERNAME` | Usuario de PostgreSQL |
-| `DB_PASSWORD` | Contrasena de PostgreSQL |
+| `DB_PASSWORD` | Contraseña de PostgreSQL |
 | `DB_PORT` | Puerto de PostgreSQL |
-| `HOST_API` | URL publica del backend |
+| `HOST_API` | URL pública del backend |
 | `JWT_SECRET` | Clave secreta para firmar tokens JWT |
-| `BCRYPT_SALT_ROUNDS` | Rondas de hasheo de contrasenas |
-| `RESEND_API_KEY` | API key de Resend para envio de emails |
-| `GOOGLE_MAPS_API_KEY` | API key de Google Maps para geocodificacion |
-| `SEED_PASSWORD` | Contrasena generica para usuarios del seed |
+| `BCRYPT_SALT_ROUNDS` | Rondas de hasheo de contraseñas |
+| `RESEND_API_KEY` | API key de Resend para envío de emails |
+| `GOOGLE_MAPS_API_KEY` | API key de Google Maps para geocodificación |
+| `SEED_PASSWORD` | Contraseña genérica para usuarios del seed |
 
 ---
 
