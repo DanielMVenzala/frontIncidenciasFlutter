@@ -212,7 +212,23 @@ class _LoginPageState extends State<LoginPage> {
                               return null;
                             },
                           ),
-                          const SizedBox(height: 24),
+                          // Enlace "¿Olvidaste tu contraseña?"
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () => context.go(AppRoutes.forgotPassword),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: const Text(
+                                '¿Olvidaste tu contraseña?',
+                                style: TextStyle(fontSize: 13),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
 
                           // Botón login
                           ElevatedButton(

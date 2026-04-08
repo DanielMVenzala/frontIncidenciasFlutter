@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../presentation/pages/login_page.dart';
 import '../presentation/pages/register_page.dart';
+import '../presentation/pages/forgot_password_page.dart';
 import '../presentation/pages/dashboard_page.dart';
 import '../presentation/pages/create_incident_page.dart';
 import '../presentation/pages/incidents_list_page.dart';
@@ -22,7 +23,8 @@ GoRouter createRouter(AuthProvider authProvider) {
     redirect: (context, state) {
       final loggedIn = authProvider.isLoggedIn;
       final isAuthRoute = state.matchedLocation == AppRoutes.login ||
-          state.matchedLocation == AppRoutes.register;
+          state.matchedLocation == AppRoutes.register ||
+          state.matchedLocation == AppRoutes.forgotPassword;
 
       // Si no está logueado y no está en auth, redirigir a login
       if (!loggedIn && !isAuthRoute) return AppRoutes.login;
@@ -40,6 +42,10 @@ GoRouter createRouter(AuthProvider authProvider) {
       GoRoute(
         path: AppRoutes.register,
         builder: (context, state) => const RegisterPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (context, state) => const ForgotPasswordPage(),
       ),
       GoRoute(
         path: AppRoutes.dashboard,

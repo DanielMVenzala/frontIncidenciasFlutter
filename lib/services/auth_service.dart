@@ -34,6 +34,16 @@ class AuthService {
     return data['mensaje'] ?? 'Revisa tu correo para activar tu cuenta';
   }
 
+  /// Solicita un email para restablecer la contraseña.
+  /// Por seguridad, el backend devuelve siempre el mismo mensaje.
+  Future<String> forgotPassword(String email) async {
+    final response = await _api.dio.post('/users/forgot-password', data: {
+      'email': email,
+    });
+    return response.data['mensaje'] ??
+        'Si el email existe, recibirás un enlace para restablecer tu contraseña.';
+  }
+
   /// Obtener perfil del usuario actual
   Future<UserModel> getProfile(String userId) async {
     final response = await _api.dio.get('/users/$userId');

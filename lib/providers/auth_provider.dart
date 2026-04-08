@@ -68,6 +68,26 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  /// Solicita un email para restablecer la contraseña.
+  Future<bool> forgotPassword(String email) async {
+    _isLoading = true;
+    _error = null;
+    _successMessage = null;
+    notifyListeners();
+
+    try {
+      _successMessage = await _authService.forgotPassword(email);
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = _extractError(e);
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<void> updateProfile(Map<String, dynamic> data) async {
     if (_user == null) return;
     _isLoading = true;
