@@ -25,7 +25,7 @@ class DashboardPage extends StatelessWidget {
             onPressed: () => themeProvider.toggle(),
           ),
         ),
-        title: const Text('Incidencias Martos'),
+        title: const Text('Martos Arregla'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),

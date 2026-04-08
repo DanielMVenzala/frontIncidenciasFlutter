@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../config/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/incident_provider.dart';
+import '../../services/places_service.dart';
 
 class CreateIncidentPage extends StatefulWidget {
   const CreateIncidentPage({super.key});
@@ -25,12 +27,37 @@ class _CreateIncidentPageState extends State<CreateIncidentPage> {
   final ImagePicker _picker = ImagePicker();
   static const int _maxImages = 5;
 
+  // Autocompletado de direcciones
+  List<PlaceSuggestion> _suggestions = [];
+  Timer? _debounce;
+
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
     _addressController.dispose();
+    _debounce?.cancel();
     super.dispose();
+  }
+
+  /// Busca sugerencias de direcciones con debounce de 400ms
+  /// para no llamar a la API en cada pulsación de tecla.
+  void _onAddressChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () async {
+      if (value.length < 3) {
+        setState(() => _suggestions = []);
+        return;
+      }
+      final placesService = context.read<PlacesService>();
+      final results = await placesService.getSuggestions(value);
+      if (mounted) setState(() => _suggestions = results);
+    });
+  }
+
+  void _selectSuggestion(PlaceSuggestion suggestion) {
+    _addressController.text = suggestion.description;
+    setState(() => _suggestions = []);
   }
 
   void _showImageOptions() {
@@ -248,13 +275,14 @@ class _CreateIncidentPageState extends State<CreateIncidentPage> {
               ),
               const SizedBox(height: 16),
 
-              // Dirección
+              // Dirección con autocompletado de Google Places
               TextFormField(
                 controller: _addressController,
                 decoration: const InputDecoration(
                   labelText: 'Dirección',
                   prefixIcon: Icon(Icons.location_on_outlined),
                 ),
+                onChanged: _onAddressChanged,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Introduce la dirección';
@@ -262,6 +290,47 @@ class _CreateIncidentPageState extends State<CreateIncidentPage> {
                   return null;
                 },
               ),
+
+              // Lista de sugerencias de direcciones
+              if (_suggestions.isNotEmpty)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardTheme.color ??
+                        Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.grey.shade300,
+                    ),
+                  ),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.zero,
+                    itemCount: _suggestions.length,
+                    separatorBuilder: (_, _) => Divider(
+                      height: 1,
+                      color: Colors.grey.shade200,
+                    ),
+                    itemBuilder: (context, index) {
+                      final suggestion = _suggestions[index];
+                      return ListTile(
+                        dense: true,
+                        leading: const Icon(
+                          Icons.place_outlined,
+                          size: 20,
+                          color: AppColors.primary,
+                        ),
+                        title: Text(
+                          suggestion.description,
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                        onTap: () => _selectSuggestion(suggestion),
+                      );
+                    },
+                  ),
+                ),
+
               const SizedBox(height: 16),
 
               // Prioridad

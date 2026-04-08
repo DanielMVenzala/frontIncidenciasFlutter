@@ -11,6 +11,7 @@ import 'services/api_service.dart';
 import 'services/auth_service.dart';
 import 'services/incident_service.dart';
 import 'services/user_service.dart';
+import 'services/places_service.dart';
 
 /// Punto de entrada de la aplicación Flutter.
 /// Inicializa los servicios y los inyecta mediante MultiProvider
@@ -21,6 +22,7 @@ void main() {
   final authService = AuthService(apiService);
   final incidentService = IncidentService(apiService);
   final userService = UserService(apiService);
+  final placesService = PlacesService(apiService);
   final themeProvider = ThemeProvider(const FlutterSecureStorage());
 
   runApp(
@@ -36,6 +38,7 @@ void main() {
         ChangeNotifierProvider.value(value: themeProvider),
         Provider.value(value: incidentService),
         Provider.value(value: userService),
+        Provider.value(value: placesService),
       ],
       child: const MainApp(),
     ),
@@ -69,7 +72,16 @@ class _MainAppState extends State<MainApp> {
     final themeProvider = context.read<ThemeProvider>();
     final authProvider = context.read<AuthProvider>();
     await themeProvider.init();
-    await authProvider.restoreSession();
+    try {
+      // Timeout de 10s para evitar que la app se quede cargando indefinidamente
+      // (ej: si Render está dormido o la sesión guardada ya no existe)
+      await authProvider.restoreSession().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => authProvider.logout(),
+      );
+    } catch (_) {
+      await authProvider.logout();
+    }
     if (mounted) {
       _router = createRouter(authProvider);
       setState(() => _initialized = true);
@@ -92,7 +104,7 @@ class _MainAppState extends State<MainApp> {
     }
 
     return MaterialApp.router(
-      title: 'Incidencias Martos',
+      title: 'Martos Arregla',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
