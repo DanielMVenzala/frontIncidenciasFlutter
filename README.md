@@ -19,7 +19,7 @@
 
 ---
 
-## What it does
+## What it does *(in production)*
 
 Martos Arregla puts the city in your pocket. Residents can snap a photo of anything that needs fixing — a pothole, a broken streetlight, fly-tipping, a damaged bench — and send it straight to the town hall. From the other side, council staff get a live dashboard to triage, prioritise and close down reports without ever leaving the app.
 
@@ -54,6 +54,21 @@ Martos Arregla puts the city in your pocket. Residents can snap a photo of anyth
 - Pinch-to-zoom photo viewer with a paged carousel
 - Quick-dial directory for council and emergency numbers
 - Spanish-localised error messages end-to-end
+
+---
+
+## Technical highlights
+
+- **Swapped Nodemailer/SMTP for Resend.** Render's free tier blocks outbound SMTP, so I migrated all transactional email (account activation and password reset) to Resend's HTTP API while keeping the same DX.
+- **Geographic gating with the Haversine formula.** The backend rejects any address that sits more than 5 km away from Martos centre, guaranteeing that incidents actually belong to the municipality.
+- **Google Places routed through the backend.** The Maps API key is locked down to the Android app's package + SHA-1 fingerprint, so address autocomplete is proxied via the server — the key never leaves the device or hits a public log.
+- **Password reset with no deep links.** The recovery email opens an HTML form served by the backend itself, sidestepping the pain of wiring native deep links on Android.
+- **Excel reports generated on the fly.** Multi-sheet workbooks (executive summary + full backlog) built with `exceljs`, including auto-filters and frozen headers. Direct download to the device with `path_provider` + `open_filex`.
+- **Single-use UUID tokens** for both account activation and password reset, with time-bound expiry and one-shot consumption.
+
+## Security
+
+JWT auth via Passport, bcrypt-hashed passwords (10 salt rounds), custom role-based guards on every sensitive endpoint, mandatory email activation, admin-driven account blocking, strict DTO validation with `class-validator` (whitelist + forbidNonWhitelisted) and protection against user enumeration on the password reset endpoint.
 
 ---
 
@@ -151,7 +166,7 @@ flutter build apk --release
 ---
 
 <p align="center">
-  Final degree project — DAM 2026
+  Final-year project for the Multiplatform App Development course (Spain) — 2026
 </p>
 
 ---
