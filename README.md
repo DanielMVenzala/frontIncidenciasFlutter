@@ -1,64 +1,50 @@
-<h1 align="center">Martos Arregla</h1>
-
 <p align="center">
-  <strong>App móvil para la gestión de incidencias urbanas del municipio de Martos (Jaén)</strong>
+  Proyecto de fin de ciclo — DAM 2026
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter" alt="Flutter">
-  <img src="https://img.shields.io/badge/NestJS-10.x-E0234E?logo=nestjs" alt="NestJS">
-  <img src="https://img.shields.io/badge/PostgreSQL-Neon-4169E1?logo=postgresql" alt="PostgreSQL">
-  <img src="https://img.shields.io/badge/Deploy-Render-46E3B7?logo=render" alt="Render">
-</p>
+-->
 
 ---
 
-<p align="center">
-  <img src="assets/images/Animation.gif" alt="Demo de la app" width="300">
-</p>
+## What it does
+
+Martos Arregla puts the city in your pocket. Residents can snap a photo of anything that needs fixing — a pothole, a broken streetlight, fly-tipping, a damaged bench — and send it straight to the town hall. From the other side, council staff get a live dashboard to triage, prioritise and close down reports without ever leaving the app.
 
 ---
 
-<!-- ==================== ESPAÑOL ==================== -->
+## Highlights
 
-## Qué hace esta app
+### What residents can do
 
-Los ciudadanos de Martos pueden **reportar problemas** en la vía pública (baches, alumbrado, mobiliario, limpieza...) desde su móvil. Los administradores del ayuntamiento **gestionan, priorizan y resuelven** esas incidencias en tiempo real.
+| Feature           | What it gives you                                                          |
+| ----------------- | -------------------------------------------------------------------------- |
+| File a report     | Title, description, address, priority and up to 5 photos                   |
+| Smart address     | Autocomplete and validation against real Martos streets via Google Maps    |
+| Live tracking     | Follow your report from "pending" to "resolved" with notes from staff      |
+| Secure onboarding | Email-based sign-up with a one-time activation link and password recovery  |
 
----
+### What admins get
 
-## Funcionalidades principales
+| Feature              | What it gives you                                                            |
+| -------------------- | ---------------------------------------------------------------------------- |
+| Triage dashboard     | Update status, set priority and leave public notes on any report             |
+| Live map             | Every active incident pinned on a Google Map and colour-coded by status      |
+| Insights             | Charts and KPIs broken down by status, priority and month                    |
+| Excel export         | One-tap download with two sheets: an executive summary and the full backlog  |
+| User management      | Block, unblock or remove accounts when something goes sideways               |
+| Powerful filtering   | Search and sort the backlog by status, priority, date or free text           |
 
-### Ciudadano
+### Polish
 
-| Función | Descripción |
-|---------|-------------|
-| Crear incidencia | Título, descripción, dirección, prioridad y hasta 5 fotos |
-| Geolocalización | La dirección se valida y geocodifica automáticamente con Google Maps |
-| Seguimiento | Ver el estado de tus incidencias y las notas del administrador |
-| Activación por email | Registro seguro con verificación por enlace de activación |
-
-### Administrador
-
-| Función | Descripción |
-|---------|-------------|
-| Gestión completa | Cambiar estado, prioridad, dejar notas visibles para el usuario |
-| Mapa interactivo | Todas las incidencias geolocalizadas con marcadores por estado |
-| Estadísticas | Gráficos por estado, prioridad y evolución mensual |
-| Gestión de usuarios | Bloquear, desbloquear o eliminar usuarios |
-| Filtros avanzados | Buscar y ordenar por estado, prioridad, fecha, título... |
-
-### UX
-
-- Modo claro / oscuro con persistencia
-- Animaciones Hero entre lista y detalle
-- Visor de imágenes a pantalla completa con zoom
-- Teléfonos de interés con apertura directa del marcador
-- Mensajes de error en español
+- Light and dark themes that stick across sessions
+- Hero animations when drilling into a report from the list
+- Pinch-to-zoom photo viewer with a paged carousel
+- Quick-dial directory for council and emergency numbers
+- Spanish-localised error messages end-to-end
 
 ---
 
-## Arquitectura
+## Architecture
 
 ```
 Flutter (Dart)                    NestJS (TypeScript)
@@ -69,33 +55,33 @@ Flutter (Dart)                    NestJS (TypeScript)
 +------------------+             +---------------------+
                                           |
                                  +--------+--------+
-                                 |  PostgreSQL      |
-                                 |  (Neon)          |
-                                 +---------+--------+
-                                           |
-                          +----------------+----------------+
-                          |                |                |
-                    Cloudinary      Google Maps       Resend
-                    (imágenes)    (geocoding)       (emails)
+                                 |   PostgreSQL    |
+                                 |     (Neon)      |
+                                 +--------+--------+
+                                          |
+                          +---------------+---------------+
+                          |               |               |
+                    Cloudinary      Google Maps        Resend
+                     (images)       (geocoding)        (emails)
 ```
 
 ---
 
-## Stack tecnológico
+## Tech stack
 
-| Capa | Tecnología |
-|------|------------|
-| Frontend | Flutter + Provider + Dio + GoRouter |
-| Backend | NestJS + TypeORM + Passport JWT |
-| Base de datos | PostgreSQL (Neon) |
-| Imágenes | Cloudinary |
-| Emails | Resend |
-| Mapas | Google Maps Platform |
-| Deploy backend | Render |
+| Layer                | Tooling                              |
+| -------------------- | ------------------------------------ |
+| Frontend             | Flutter, Provider, Dio, GoRouter     |
+| Backend              | NestJS, TypeORM, Passport JWT        |
+| Database             | PostgreSQL on Neon                   |
+| Image storage        | Cloudinary                           |
+| Transactional email  | Resend                               |
+| Maps & geocoding     | Google Maps Platform                 |
+| Backend hosting      | Render                               |
 
 ---
 
-## Cómo ejecutar en local
+## Run it locally
 
 ### Backend
 
@@ -103,7 +89,7 @@ Flutter (Dart)                    NestJS (TypeScript)
 git clone https://github.com/DanielMVenzala/backendIncidenciasNest.git
 cd backendIncidenciasNest
 npm install
-# Configurar .env con las variables de entorno necesarias
+# Drop your secrets into .env (see the table below)
 npm run start:dev
 ```
 
@@ -113,11 +99,11 @@ npm run start:dev
 git clone https://github.com/DanielMVenzala/frontIncidenciasFlutter.git
 cd frontIncidenciasFlutter
 flutter pub get
-# Cambiar baseUrl en lib/config/app_config.dart si usas backend local
+# Point lib/config/app_config.dart at your local backend if needed
 flutter run
 ```
 
-### Generar APK
+### Ship a release APK
 
 ```bash
 flutter build apk --release
@@ -125,35 +111,34 @@ flutter build apk --release
 
 ---
 
-## Variables de entorno (backend)
+## Backend environment variables
 
-| Variable | Descripción |
-|----------|-------------|
-| `DB_NAME` | Nombre de la base de datos |
-| `DB_USERNAME` | Usuario de PostgreSQL |
-| `DB_PASSWORD` | Contraseña de PostgreSQL |
-| `DB_PORT` | Puerto de PostgreSQL |
-| `HOST_API` | URL pública del backend |
-| `JWT_SECRET` | Clave secreta para firmar tokens JWT |
-| `BCRYPT_SALT_ROUNDS` | Rondas de hasheo de contraseñas |
-| `RESEND_API_KEY` | API key de Resend para envío de emails |
-| `GOOGLE_MAPS_API_KEY` | API key de Google Maps para geocodificación |
-| `SEED_PASSWORD` | Contraseña genérica para usuarios del seed |
+| Variable              | Purpose                                                           |
+| --------------------- | ----------------------------------------------------------------- |
+| `DB_NAME`             | Database name                                                     |
+| `DB_USERNAME`         | PostgreSQL username                                               |
+| `DB_PASSWORD`         | PostgreSQL password                                               |
+| `DB_PORT`             | PostgreSQL port                                                   |
+| `HOST_API`            | Public URL where the backend is reachable                         |
+| `JWT_SECRET`          | Secret used to sign and verify JWT tokens                         |
+| `BCRYPT_SALT_ROUNDS`  | bcrypt cost factor for password hashing                           |
+| `RESEND_API_KEY`      | API key for sending transactional email through Resend            |
+| `GOOGLE_MAPS_API_KEY` | Backend Google Maps key for Geocoding and Places (no app limit)   |
+| `SEED_PASSWORD`       | Generic password assigned to every user created by the seeder     |
 
 ---
 
-## Repositorios
+## Repositories
 
-| Proyecto | Enlace |
-|----------|--------|
-| Backend (NestJS) | [backendIncidenciasNest](https://github.com/DanielMVenzala/backendIncidenciasNest) |
+| Project            | Link                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| Backend (NestJS)   | [backendIncidenciasNest](https://github.com/DanielMVenzala/backendIncidenciasNest)   |
 | Frontend (Flutter) | [frontIncidenciasFlutter](https://github.com/DanielMVenzala/frontIncidenciasFlutter) |
 
 ---
 
 <p align="center">
-  Proyecto de fin de ciclo — DAM 2026
+  Final degree project — DAM 2026
 </p>
 
 ---
-
