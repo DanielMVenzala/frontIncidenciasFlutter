@@ -1,8 +1,21 @@
+<h1 align="center">Martos Arregla</h1>
+
 <p align="center">
-  Proyecto de fin de ciclo — DAM 2026
+  <strong>A mobile app to report and manage urban issues in Martos (Jaén, Spain)</strong>
 </p>
 
--->
+<p align="center">
+  <img src="https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter" alt="Flutter">
+  <img src="https://img.shields.io/badge/NestJS-10.x-E0234E?logo=nestjs" alt="NestJS">
+  <img src="https://img.shields.io/badge/PostgreSQL-Neon-4169E1?logo=postgresql" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/Deploy-Render-46E3B7?logo=render" alt="Render">
+</p>
+
+---
+
+<p align="center">
+  <img src="assets/images/Animation.gif" alt="App demo" width="300">
+</p>
 
 ---
 
