@@ -55,20 +55,25 @@ class DashboardPage extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    // Avatar
+                    // Avatar (muestra foto de perfil si existe)
                     CircleAvatar(
                       radius: 28,
                       backgroundColor: Colors.white.withValues(alpha: 0.2),
-                      child: Text(
-                        (user?.name.isNotEmpty == true)
-                            ? user!.name[0].toUpperCase()
-                            : '?',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
+                      backgroundImage: user?.hasProfilePhoto == true
+                          ? NetworkImage(user!.profilePhoto!)
+                          : null,
+                      child: user?.hasProfilePhoto != true
+                          ? Text(
+                              (user?.name.isNotEmpty == true)
+                                  ? user!.name[0].toUpperCase()
+                                  : '?',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            )
+                          : null,
                     ),
                     const SizedBox(width: 16),
                     Expanded(

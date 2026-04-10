@@ -6,6 +6,7 @@ class UserModel {
   final String email;
   final String role;
   final bool bloqueado;
+  final String? profilePhoto;
 
   UserModel({
     required this.id,
@@ -13,9 +14,11 @@ class UserModel {
     required this.email,
     required this.role,
     this.bloqueado = false,
+    this.profilePhoto,
   });
 
   bool get isAdmin => role == 'admin';
+  bool get hasProfilePhoto => profilePhoto != null && profilePhoto!.isNotEmpty;
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -24,6 +27,7 @@ class UserModel {
       email: json['email'] ?? '',
       role: json['rol'] ?? 'usuario',
       bloqueado: json['bloqueado'] ?? false,
+      profilePhoto: json['fotoPerfil'],
     );
   }
 
