@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:provider/provider.dart';
 import '../../config/app_colors.dart';
 import '../../models/incident_model.dart';
 import '../../providers/incident_provider.dart';
+import '../../services/incident_service.dart';
 
 class StatisticsPage extends StatefulWidget {
   const StatisticsPage({super.key});
@@ -13,12 +15,140 @@ class StatisticsPage extends StatefulWidget {
 }
 
 class _StatisticsPageState extends State<StatisticsPage> {
+  bool _downloading = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<IncidentProvider>().loadAllIncidents();
     });
+  }
+
+  /// Abre el diálogo de filtros y, si el usuario confirma, descarga el Excel.
+  Future<void> _showDownloadDialog() async {
+    DateTime? desde;
+    DateTime? hasta;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setLocalState) {
+            String formatDate(DateTime? d) =>
+                d == null ? 'Seleccionar' : '${d.day}/${d.month}/${d.year}';
+
+            return AlertDialog(
+              title: const Text('Descargar informe'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Filtra por rango de fechas (opcional):',
+                    style: TextStyle(fontSize: 13),
+                  ),
+                  const SizedBox(height: 12),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    leading: const Icon(Icons.calendar_today, size: 20),
+                    title: const Text('Desde', style: TextStyle(fontSize: 13)),
+                    subtitle: Text(formatDate(desde),
+                        style: const TextStyle(fontSize: 12)),
+                    trailing: desde != null
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 18),
+                            onPressed: () => setLocalState(() => desde = null),
+                          )
+                        : null,
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: ctx,
+                        initialDate: desde ?? DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime.now(),
+                      );
+                      if (picked != null) setLocalState(() => desde = picked);
+                    },
+                  ),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    leading: const Icon(Icons.calendar_today, size: 20),
+                    title: const Text('Hasta', style: TextStyle(fontSize: 13)),
+                    subtitle: Text(formatDate(hasta),
+                        style: const TextStyle(fontSize: 12)),
+                    trailing: hasta != null
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 18),
+                            onPressed: () => setLocalState(() => hasta = null),
+                          )
+                        : null,
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: ctx,
+                        initialDate: hasta ?? DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime.now(),
+                      );
+                      if (picked != null) setLocalState(() => hasta = picked);
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Cancelar'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  icon: const Icon(Icons.download, size: 18),
+                  label: const Text('Descargar'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _downloading = true);
+    try {
+      final filters = <String, dynamic>{};
+      if (desde != null) {
+        filters['desde'] =
+            '${desde!.year}-${desde!.month.toString().padLeft(2, '0')}-${desde!.day.toString().padLeft(2, '0')}';
+      }
+      if (hasta != null) {
+        filters['hasta'] =
+            '${hasta!.year}-${hasta!.month.toString().padLeft(2, '0')}-${hasta!.day.toString().padLeft(2, '0')}';
+      }
+
+      final service = context.read<IncidentService>();
+      final filePath = await service.downloadIncidentsReport(
+        filters: filters.isEmpty ? null : filters,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Informe descargado correctamente')),
+        );
+      }
+      // Abrir el archivo con la app por defecto del dispositivo
+      await OpenFilex.open(filePath);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al descargar: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _downloading = false);
+    }
   }
 
   @override
@@ -29,7 +159,25 @@ class _StatisticsPageState extends State<StatisticsPage> {
     final textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Estadísticas')),
+      appBar: AppBar(
+        title: const Text('Estadísticas'),
+        actions: [
+          IconButton(
+            icon: _downloading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Icon(Icons.file_download_outlined),
+            tooltip: 'Descargar informe',
+            onPressed: _downloading ? null : _showDownloadDialog,
+          ),
+        ],
+      ),
       body: provider.isLoading
           ? const Center(child: CircularProgressIndicator())
           : incidents.isEmpty

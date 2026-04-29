@@ -31,10 +31,10 @@ class AppColors {
   static const Color textSecondaryDark = Color(0xFFB0B0B0);
   static const Color textLightDark = Color(0xFF787878);
 
-  // Estados de incidencia (alineados con pines Google Maps)
-  static const Color statusPending = Color(0xFFFF9800);    // Naranja (hueOrange)
-  static const Color statusInProgress = Color(0xFF4285F4); // Azul (hueBlue)
-  static const Color statusResolved = Color(0xFF34A853);   // Verde (hueGreen)
+  // Estados de incidencia (alineados con los pines reales de Google Maps)
+  static const Color statusPending = Color(0xFFEA9133);    // Naranja
+  static const Color statusInProgress = Color(0xFF3535EA); // Azul
+  static const Color statusResolved = Color(0xFF32EA33);   // Verde
   static const Color statusRejected = Color(0xFFE53935);   // Rojo
 
   // Prioridades

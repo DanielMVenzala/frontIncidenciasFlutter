@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
 import '../models/incident_model.dart';
 import 'api_service.dart';
 
@@ -64,6 +66,30 @@ class IncidentService {
       data: {'texto': texto, 'usuario': userEmail},
     );
     return response.data;
+  }
+
+  /// Descarga el informe Excel de incidencias y lo guarda en el almacenamiento del dispositivo.
+  /// Devuelve la ruta local del archivo descargado.
+  /// Acepta filtros opcionales (fechas, estado, prioridad).
+  Future<String> downloadIncidentsReport({
+    Map<String, dynamic>? filters,
+  }) async {
+    final response = await _api.dio.get<List<int>>(
+      '/incidents/report/excel',
+      queryParameters: filters,
+      options: Options(
+        responseType: ResponseType.bytes,
+      ),
+    );
+
+    // Guardar en el directorio temporal del dispositivo
+    final dir = await getTemporaryDirectory();
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final filePath = '${dir.path}/informe_incidencias_$timestamp.xlsx';
+    final file = File(filePath);
+    await file.writeAsBytes(response.data!);
+
+    return filePath;
   }
 
   /// Subir imagen de incidencia

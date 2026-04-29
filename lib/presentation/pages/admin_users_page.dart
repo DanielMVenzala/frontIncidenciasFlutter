@@ -184,7 +184,7 @@ class _UserCard extends StatelessWidget {
           padding: const EdgeInsets.all(14),
           child: Row(
             children: [
-              // Avatar
+              // Avatar (muestra foto de perfil si existe)
               CircleAvatar(
                 radius: 24,
                 backgroundColor: user.bloqueado
@@ -192,16 +192,21 @@ class _UserCard extends StatelessWidget {
                     : isAdmin
                         ? AppColors.accent.withValues(alpha: 0.15)
                         : AppColors.primary.withValues(alpha: 0.15),
+                backgroundImage: user.hasProfilePhoto && !user.bloqueado
+                    ? NetworkImage(user.profilePhoto!)
+                    : null,
                 child: user.bloqueado
                     ? const Icon(Icons.block, color: Colors.grey)
-                    : Text(
-                        user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: isAdmin ? AppColors.accent : AppColors.primary,
-                        ),
-                      ),
+                    : !user.hasProfilePhoto
+                        ? Text(
+                            user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: isAdmin ? AppColors.accent : AppColors.primary,
+                            ),
+                          )
+                        : null,
               ),
               const SizedBox(width: 14),
               // Info
