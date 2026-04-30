@@ -168,6 +168,7 @@ flutter build apk --release
 | ------------------ | ------------------------------------------------------------------------------------ |
 | Backend (NestJS)   | [backendIncidenciasNest](https://github.com/DanielMVenzala/backendIncidenciasNest)   |
 | Frontend (Flutter) | [frontIncidenciasFlutter](https://github.com/DanielMVenzala/frontIncidenciasFlutter) |
+| Panel web (Next.js) | [web-incidencias-next](https://github.com/DanielMVenzala/web-incidencias-next) |
 
 ---
 
@@ -227,6 +228,9 @@ Martos Arregla puts the city in your pocket. Residents can snap a photo of anyth
 | Excel export         | One-tap download with two sheets: an executive summary and the full backlog  |
 | User management      | Block, unblock or remove accounts when something goes sideways               |
 | Powerful filtering   | Search and sort the backlog by status, priority, date or free text           |
+| Web admin panel      | Full Next.js dashboard with batch editing, advanced filters and SSR          |
+
+> Admins can also work from the **dedicated web panel** ([web-incidencias-next](https://github.com/DanielMVenzala/web-incidencias-next)), built in Next.js + Tailwind. It shares the same REST API and adds bulk editing, sortable columns and richer filtering for desktop workflows.
 
 ### Polish
 
@@ -256,22 +260,31 @@ JWT auth via Passport, bcrypt-hashed passwords (10 salt rounds), custom role-bas
 ## Architecture
 
 ```
-Flutter (Dart)                    NestJS (TypeScript)
-+------------------+             +---------------------+
-|  UI (Pages)      |             |  Controllers        |
-|  Providers       | --- HTTP -->|  Services           |
-|  Services (Dio)  |   (JWT)    |  TypeORM Entities   |
-+------------------+             +---------------------+
-                                          |
-                                 +--------+--------+
-                                 |   PostgreSQL    |
-                                 |     (Neon)      |
-                                 +--------+--------+
-                                          |
-                          +---------------+---------------+
-                          |               |               |
-                    Cloudinary      Google Maps        Resend
-                     (images)       (geocoding)        (emails)
+Flutter mobile app          Next.js admin panel
++------------------+        +---------------------+
+|  UI (Pages)      |        |  Pages (App Router) |
+|  Providers       |        |  Components         |
+|  Services (Dio)  |        |  Services (Axios)   |
++--------+---------+        +---------+-----------+
+         \                            /
+          \   HTTP + JWT             /
+           \                        /
+            v                      v
+         +-----------------------------+
+         |      NestJS REST API        |
+         |  Controllers · Services     |
+         |  TypeORM · Guards · DTOs    |
+         +--------------+--------------+
+                        |
+              +---------+---------+
+              |    PostgreSQL     |
+              |       (Neon)      |
+              +---------+---------+
+                        |
+        +---------------+---------------+
+        |               |               |
+   Cloudinary     Google Maps        Resend
+    (images)      (geocoding)        (emails)
 ```
 
 ---
@@ -343,6 +356,7 @@ flutter build apk --release
 | ------------------ | ------------------------------------------------------------------------------------ |
 | Backend (NestJS)   | [backendIncidenciasNest](https://github.com/DanielMVenzala/backendIncidenciasNest)   |
 | Frontend (Flutter) | [frontIncidenciasFlutter](https://github.com/DanielMVenzala/frontIncidenciasFlutter) |
+| Web admin (Next.js) | [web-incidencias-next](https://github.com/DanielMVenzala/web-incidencias-next) |
 
 ---
 
