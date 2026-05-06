@@ -108,6 +108,10 @@ class AuthProvider extends ChangeNotifier {
   Future<void> logout() async {
     await _authService.logout();
     _user = null;
+    // Limpiar errores y mensajes pendientes al cerrar sesión
+    // (si no, podrían aparecer en la pantalla de login)
+    _error = null;
+    _successMessage = null;
     notifyListeners();
   }
 
