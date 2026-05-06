@@ -144,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Eliminar foto'),
-        content: const Text('¿Quieres eliminar tu foto de perfil? Volverás a tener la inicial de tu nombre como avatar.'),
+        content: const Text('¿Quieres eliminar tu foto de perfil?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
