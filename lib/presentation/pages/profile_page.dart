@@ -45,10 +45,15 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  /// Muestra opciones para elegir foto de perfil (cámara o galería),
-  /// la sube a Cloudinary y actualiza el perfil del usuario.
+  /// Muestra opciones para gestionar la foto de perfil:
+  /// - Hacer una foto con la cámara
+  /// - Elegir una foto de la galería
+  /// - Eliminar la foto actual (solo si el usuario tiene una)
   Future<void> _changeProfilePhoto() async {
-    final source = await showModalBottomSheet<ImageSource>(
+    final user = context.read<AuthProvider>().user;
+    final hasPhoto = user?.hasProfilePhoto == true;
+
+    final action = await showModalBottomSheet<_PhotoAction>(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -62,20 +67,39 @@ class _ProfilePageState extends State<ProfilePage> {
               ListTile(
                 leading: const Icon(Icons.camera_alt),
                 title: const Text('Hacer una foto'),
-                onTap: () => Navigator.pop(ctx, ImageSource.camera),
+                onTap: () => Navigator.pop(ctx, _PhotoAction.camera),
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Elegir de la galería'),
-                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+                onTap: () => Navigator.pop(ctx, _PhotoAction.gallery),
               ),
+              // Solo permitir eliminar si hay foto actualmente
+              if (hasPhoto)
+                ListTile(
+                  leading: Icon(Icons.delete_outline, color: AppColors.statusRejected),
+                  title: Text(
+                    'Eliminar foto actual',
+                    style: TextStyle(color: AppColors.statusRejected),
+                  ),
+                  onTap: () => Navigator.pop(ctx, _PhotoAction.delete),
+                ),
             ],
           ),
         ),
       ),
     );
 
-    if (source == null || !mounted) return;
+    if (action == null || !mounted) return;
+
+    if (action == _PhotoAction.delete) {
+      await _deleteProfilePhoto();
+      return;
+    }
+
+    final source = action == _PhotoAction.camera
+        ? ImageSource.camera
+        : ImageSource.gallery;
 
     final pickedFile = await _picker.pickImage(
       source: source,
@@ -106,6 +130,52 @@ class _ProfilePageState extends State<ProfilePage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error al subir la foto')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _uploadingPhoto = false);
+    }
+  }
+
+  /// Pide confirmación y elimina la foto de perfil del usuario.
+  /// Al ponerla a null, la app vuelve a mostrar la inicial del nombre.
+  Future<void> _deleteProfilePhoto() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Eliminar foto'),
+        content: const Text('¿Quieres eliminar tu foto de perfil? Volverás a tener la inicial de tu nombre como avatar.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.statusRejected),
+            child: const Text('Eliminar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _uploadingPhoto = true);
+    try {
+      final authProvider = context.read<AuthProvider>();
+      // Enviar fotoPerfil: null para que el backend la borre
+      await authProvider.updateProfile({'fotoPerfil': null});
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Foto de perfil eliminada')),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al eliminar la foto')),
         );
       }
     } finally {
@@ -405,3 +475,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
+
+/// Acciones disponibles en el menú de foto de perfil.
+enum _PhotoAction { camera, gallery, delete }
