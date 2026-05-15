@@ -19,14 +19,9 @@
 
 ---
 
-<!--
-======================================================================
-VERSIÓN EN ESPAÑOL — comentada para mostrar solo la versión en inglés.
-Para reactivarla, mueve el cierre `-->` que hay al final del bloque
-o intercambia el orden con la sección en inglés que está más abajo.
-======================================================================
 
-## Qué hace esta app *(en producción)*
+
+## Qué hace esta app
 
 Los ciudadanos de Martos pueden **reportar problemas** en la vía pública (baches, alumbrado, mobiliario, limpieza...) desde su móvil. Los administradores del ayuntamiento **gestionan, priorizan y resuelven** esas incidencias en tiempo real.
 
